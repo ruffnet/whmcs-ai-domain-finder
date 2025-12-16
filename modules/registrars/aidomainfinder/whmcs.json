@@ -1,0 +1,37 @@
+{
+    "schema": "1.0",
+    "type": "whmcs-registrars",
+    "name": "aidomainfinder",
+    "license": "MIT",
+    "category": "registrars",
+    "description": {
+        "name": "AI Domain Finder",
+        "tagline": "AI-powered domain name suggestions using Google Gemini",
+        "long": "Generate creative, brandable domain name suggestions using Google Gemini AI. The module intelligently suggests domain names based on user searches, with full support for internationalized domain names (IDN) and smart rate limiting to stay within API quotas.",
+        "features": [
+            "AI-powered domain suggestions using Google Gemini API",
+            "Support for multiple Gemini models (2.0 Flash, 2.5 Flash, 2.5 Pro)",
+            "Adjustable creativity (temperature) setting",
+            "Full IDN support with smart detection",
+            "Built-in rate limiting (daily and per-minute)",
+            "Customizable AI prompt with variable substitution",
+            "Automatic Punycode conversion for WHOIS lookups",
+            "More Suggestions button support (30+ results)"
+        ]
+    },
+    "logo": {
+        "filename": "logo.png"
+    },
+    "support": {
+        "homepage": "https://github.com/jwalcz/whmcs-ai-domain-finder",
+        "learn_more": "https://github.com/jwalcz/whmcs-ai-domain-finder#readme",
+        "docs_url": "https://github.com/jwalcz/whmcs-ai-domain-finder#readme",
+        "support_url": "https://github.com/jwalcz/whmcs-ai-domain-finder/issues"
+    },
+    "authors": [
+        {
+            "name": "jwalcz",
+            "homepage": "https://github.com/jwalcz"
+        }
+    ]
+}

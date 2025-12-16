@@ -1,0 +1,28 @@
+# IDE
+.idea/
+.vscode/
+.claude/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# WHMCS source (for development only)
+whmcs_source/
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+
+# Composer (if added later)
+/vendor/
+composer.lock
+
+# Testing
+.phpunit.result.cache
+coverage/
