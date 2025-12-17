@@ -137,6 +137,41 @@ function aidomainfinder_DomainSuggestionOptions()
 }
 
 /**
+ * Checks domain availability.
+ *
+ * Currently returns all domains as registered for debugging purposes.
+ *
+ * @param array $params WHMCS parameters
+ *
+ * @return \WHMCS\Domains\DomainLookup\ResultsList
+ */
+function aidomainfinder_CheckAvailability($params)
+{
+    $results = new \WHMCS\Domains\DomainLookup\ResultsList();
+
+    // Debug logging
+    logModuleCall('aidomainfinder', 'CheckAvailability', $params, '', '', isset($params['ApiKey']) ? [$params['ApiKey']] : []);
+
+    $searchTerm = isset($params['searchTerm']) ? $params['searchTerm'] : '';
+    $tldsToInclude = isset($params['tldsToInclude']) && is_array($params['tldsToInclude']) ? $params['tldsToInclude'] : [];
+
+    if (empty($searchTerm) || empty($tldsToInclude)) {
+        return $results;
+    }
+
+    $sld = mb_strtolower(trim($searchTerm), 'UTF-8');
+
+    foreach ($tldsToInclude as $tld) {
+        $tld = ltrim($tld, '.');
+        $searchResult = new \WHMCS\Domains\DomainLookup\SearchResult($sld, $tld);
+        $searchResult->setStatus(\WHMCS\Domains\DomainLookup\SearchResult::STATUS_REGISTERED);
+        $results->append($searchResult);
+    }
+
+    return $results;
+}
+
+/**
  * Generates domain suggestions using Google Gemini API.
  *
  * Calls the Gemini API with a customizable prompt to generate creative
