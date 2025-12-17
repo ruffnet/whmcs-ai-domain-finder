@@ -3,7 +3,7 @@
  * Gemini API Handler for AI Domain Finder
  *
  * Provides integration with Google Gemini API for generating domain name suggestions.
- * Includes rate limiting, IDN support, and Punycode conversion.
+ * Includes rate limiting and IDN support.
  *
  * @package    WHMCS
  * @subpackage Registrar\Aidomainfinder
@@ -185,61 +185,6 @@ Requirements:
 
         // Allow Unicode letters (\p{L}), numbers (\p{N}), and hyphens
         return preg_match('/^[\p{L}\p{N}][\p{L}\p{N}\-]*$/u', $sld) === 1;
-    }
-
-    /**
-     * Converts an IDN domain to Punycode (ASCII-compatible encoding).
-     *
-     * Uses PHP's idn_to_ascii() function from the intl extension.
-     * Returns the original domain if conversion fails or if the
-     * domain is already ASCII.
-     *
-     * @param string $domain The domain name to convert (e.g., "kávé.hu").
-     *
-     * @return string Punycode domain (e.g., "xn--kv-fka.hu") or original if ASCII.
-     */
-    public static function toAscii($domain)
-    {
-        if (!self::isIdn($domain)) {
-            return $domain;
-        }
-
-        if (function_exists('idn_to_ascii')) {
-            $ascii = idn_to_ascii($domain, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
-            return $ascii !== false ? $ascii : $domain;
-        }
-
-        return $domain;
-    }
-
-    /**
-     * Transliterates accented characters to ASCII equivalents.
-     *
-     * Uses the ICU Transliterator to convert international characters
-     * to their closest ASCII representation.
-     *
-     * @param string $string The string to transliterate (e.g., "kávézó").
-     *
-     * @return string ASCII transliteration (e.g., "kavezo") or original string on failure.
-     */
-    public static function transliterate($string)
-    {
-        if (function_exists('transliterator_transliterate')) {
-            $result = transliterator_transliterate('Any-Latin; Latin-ASCII', $string);
-            if ($result !== false) {
-                return $result;
-            }
-        }
-
-        // Fallback to iconv if intl extension is not available
-        if (function_exists('iconv')) {
-            $result = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $string);
-            if ($result !== false) {
-                return $result;
-            }
-        }
-
-        return $string;
     }
 
     /**

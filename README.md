@@ -17,7 +17,7 @@ A WHMCS registrar module that generates creative domain name suggestions using G
 
 - WHMCS 7.0 or later
 - PHP 7.2 or later
-- PHP intl extension (for Punycode conversion, usually pre-installed)
+- PHP intl extension (usually pre-installed)
 - Google Gemini API key ([Get one here](https://aistudio.google.com/apikey))
 
 ## Installation
@@ -166,19 +166,7 @@ The module automatically adjusts AI behavior based on the search term:
 1. **Detection**: Module checks if search term contains non-ASCII characters
 2. **Prompt Injection**: The `{idnInstruction}` variable is automatically set based on detection
 3. **Validation**: Both ASCII and Unicode domain names are validated
-4. **WHOIS Lookup**: IDN domains are converted to Punycode (e.g., `kávé.hu` → `xn--kv-fka.hu`) for WHOIS queries
-
-### Transliteration
-
-The module includes a transliteration function that properly converts accented characters to ASCII:
-
-| Input | Output |
-|-------|--------|
-| `kávézó` | `kavezo` |
-| `über` | `uber` |
-| `château` | `chateau` |
-
-Supports Hungarian, German, French, Spanish, Italian, Portuguese, Polish, Czech, Slovak, and Nordic characters.
+4. **WHOIS Lookup**: Uses WHMCS built-in WHOIS class which handles IDN/Punycode conversion automatically
 
 ### IDN Instructions
 

@@ -137,20 +137,23 @@ function aidomainfinder_DomainSuggestionOptions()
 }
 
 /**
- * Checks domain availability.
+ * Checks domain availability using WHMCS built-in WHOIS lookup.
  *
- * Currently returns all domains as registered for debugging purposes.
+ * Uses the official WHMCS\WHOIS class which:
+ * - Reads server configuration from dist.whois.json and whois.json
+ * - Handles both socket and HTTP based WHOIS lookups
+ * - Supports IDN domains
+ * - Logs queries to tblwhoislog table
  *
- * @param array $params WHMCS parameters
+ * @param array $params WHMCS parameters containing:
+ *                      - searchTerm: The domain SLD to check
+ *                      - tldsToInclude: Array of TLDs to check against
  *
  * @return \WHMCS\Domains\DomainLookup\ResultsList
  */
 function aidomainfinder_CheckAvailability($params)
 {
     $results = new \WHMCS\Domains\DomainLookup\ResultsList();
-
-    // Debug logging
-    logModuleCall('aidomainfinder', 'CheckAvailability', $params, '', '', isset($params['ApiKey']) ? [$params['ApiKey']] : []);
 
     $searchTerm = isset($params['searchTerm']) ? $params['searchTerm'] : '';
     $tldsToInclude = isset($params['tldsToInclude']) && is_array($params['tldsToInclude']) ? $params['tldsToInclude'] : [];
@@ -160,11 +163,27 @@ function aidomainfinder_CheckAvailability($params)
     }
 
     $sld = mb_strtolower(trim($searchTerm), 'UTF-8');
+    $whois = new \WHMCS\WHOIS();
 
     foreach ($tldsToInclude as $tld) {
-        $tld = ltrim($tld, '.');
+        $tld = '.' . ltrim($tld, '.');
+
         $searchResult = new \WHMCS\Domains\DomainLookup\SearchResult($sld, $tld);
-        $searchResult->setStatus(\WHMCS\Domains\DomainLookup\SearchResult::STATUS_REGISTERED);
+
+        // WHMCS WHOIS lookup
+        $lookupResult = $whois->lookup(['sld' => $sld, 'tld' => $tld]);
+
+        if ($lookupResult === false) {
+            // TLD not supported or IDN disabled
+            $searchResult->setStatus(\WHMCS\Domains\DomainLookup\SearchResult::STATUS_TLD_NOT_SUPPORTED);
+        } elseif (isset($lookupResult['result']) && $lookupResult['result'] === 'available') {
+            $searchResult->setStatus(\WHMCS\Domains\DomainLookup\SearchResult::STATUS_NOT_REGISTERED);
+        } elseif (isset($lookupResult['result']) && $lookupResult['result'] === 'error') {
+            $searchResult->setStatus(\WHMCS\Domains\DomainLookup\SearchResult::STATUS_UNKNOWN);
+        } else {
+            $searchResult->setStatus(\WHMCS\Domains\DomainLookup\SearchResult::STATUS_REGISTERED);
+        }
+
         $results->append($searchResult);
     }
 

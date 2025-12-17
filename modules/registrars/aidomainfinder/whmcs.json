@@ -15,7 +15,7 @@
             "Full IDN support with smart detection",
             "Built-in rate limiting (daily and per-minute)",
             "Customizable AI prompt with variable substitution",
-            "Automatic Punycode conversion for WHOIS lookups",
+            "Domain availability checking via WHMCS built-in WHOIS",
             "More Suggestions button support (30+ results)"
         ]
     },
